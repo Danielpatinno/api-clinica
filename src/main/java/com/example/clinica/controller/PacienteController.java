@@ -1,13 +1,14 @@
 package com.example.clinica.controller;
 
-import com.example.clinica.consulta.Consulta;
 import com.example.clinica.paciente.Paciente;
 import com.example.clinica.paciente.PacienteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("pacientes")
@@ -18,20 +19,25 @@ public class PacienteController {
 
     @GetMapping
     public List<Paciente> getAll() {
-        return repository.findAll();
+        List<Paciente> pacientes = repository.findAll();
+        return pacientes;
     }
 
     @PostMapping
     public Paciente create(@RequestBody Paciente paciente) {
-        // Salva o novo médico no banco de dados
         return repository.save(paciente);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Paciente> getById(@PathVariable Long id) {
-        return repository.findById(id)
-                .map(agenda -> ResponseEntity.ok().body(agenda))
-                .orElseGet(() -> ResponseEntity.notFound().build());
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Object> delete(@PathVariable Long id) {
+        repository.deleteById(id);
+
+        Map<String, String> successResponse = new HashMap<>();
+        successResponse.put("message", "Paciente excluido.");
+
+        return ResponseEntity.ok(successResponse);
     }
+
+
 
 }
